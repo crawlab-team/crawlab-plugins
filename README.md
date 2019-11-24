@@ -9,4 +9,4 @@
 - Support centos now and will support more os later.
 #### how to use cp?
 - cp init --env=python --version=3.6.5 (default is python-3.6.5)
-- And more 
+- We will add more crawlab plugins 
