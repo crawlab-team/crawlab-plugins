@@ -54,52 +54,65 @@ func (this *Command) PythonEnvInit(cli *cli.Context) {
 
 	gccInfo, err := exec.Command("yum", "install", "gcc", "-y").Output()
 	if err != nil {
-		log.Fatalf("gcc install failed", gccInfo)
+		log.Fatalf("gcc install failed", string(gccInfo))
 	}
 
 	dependPackage, err := exec.Command("yum", "install", "openssl-devel", "bizp2-devel", "expat-devel", "gdbm-devel", "readline-devel", "sqlite-devel", "libffi-devel", "-y").Output()
 	if err != nil {
-		log.Fatalf("depend package like openssl-devel install failed", dependPackage)
+		log.Fatalf("depend package like openssl-devel install failed", string(dependPackage))
 	}
 	pythonDownInfo, err := exec.Command("wget", "http://npm.taobao.org/mirrors/python/"+version+"/Python-"+version+".tgz").Output()
 	if err != nil {
-		log.Fatalf("Download python package failed", pythonDownInfo)
+		log.Fatalf("Download python package failed", string(pythonDownInfo))
 	}
 
-	makeDirInfo, err := exec.Command("mkdir", "/usr/local/python3").Output()
+	tarInfo, err := exec.Command("tar", "-zxvf", "Python-"+version+".tgz").Output()
 	if err != nil {
-		log.Fatalf("make python3 dir failed", makeDirInfo)
+		log.Fatalf("tar -zxvf failed", string(tarInfo))
+	}
+	mvInfo, err := exec.Command("bash", "-c", "mv "+"Python-"+version+" /usr/local/").Output()
+	if err != nil {
+		log.Fatalf("mv Python+version to /usr/local/ failed", string(mvInfo))
+	} else {
+		log.Info("#########")
+	}
+	//cdInfo, err := exec.Command("cd", "/usr/local/"+"Python-"+version).Output()
+	//if err != nil {
+	//	log.Fatalf("cd python dir failed", string(cdInfo))
+	//}
+	err = os.Chdir("/usr/local/" + "Python-" + version)
+	if err != nil {
+		log.Fatalf("cd Python dir failed", err)
+	} else {
+		log.Info("cd /usr/local/Python-" + version)
 	}
 
-	tarInfo, err := exec.Command("tar", "-zxvf", "Python-"+version+".tgz", "&&", "cd", "Python-"+version).Output()
+	mkconfigInfo, err := exec.Command("/usr/local/Python-" + version + "/configure").Output()
 	if err != nil {
-		log.Fatalf("tar -zxvf failed", tarInfo)
-	}
-	mkconfigInfo, err := exec.Command("./configure", "--prefix=/usr/local/python3").Output()
-	if err != nil {
-		log.Fatalf("configure failed", mkconfigInfo)
+		log.Fatalf("configure failed", string(mkconfigInfo))
+	} else {
+		log.Info("configure success")
 	}
 
-	makeInfo, err := exec.Command("make", "&&", "make", "install").Output()
+	makeInfo, err := exec.Command("bash", "-c", "make && make install").Output()
 	if err != nil {
-		log.Fatalf("make install python failed", makeInfo)
+		log.Fatalf("make install python failed", string(makeInfo))
+	} else {
+		log.Info("make install success")
 	}
-	lnPythonInfo, err := exec.Command("ln", "-s", "/usr/local/python3/bin/python3", "/usr/bin/python3").Output()
-	if err != nil {
-		log.Fatalf("ln python failed", lnPythonInfo)
-	}
-	lnPipInfo, err := exec.Command("ln", "-s", "/usr/local/python3/bin/pip3", "/usr/bin/pip3").Output()
-	if err != nil {
-		log.Fatalf("ln pip failed", lnPipInfo)
-	}
+
 	eperlInfo, err := exec.Command("sudo", "yum", "-y", "install", "epel-release", "python-pip").Output()
 	if err != nil {
-		log.Fatalf("eperlInfo install failed", eperlInfo)
+		log.Fatalf("eperlInfo install failed", string(eperlInfo))
+	}
+	cpInfo, err := exec.Command("cp", "python", "/bin/python3").Output()
+	if err != nil {
+		log.Fatalf("cp python /bin/python3 failed", string(cpInfo))
 	}
 
 	testPython, err := exec.Command("python3", "-V").Output()
 	if err != nil {
-		log.Fatalf("python-"+version+"install failed", testPython)
+		log.Fatalf("python-"+version+"install failed", string(testPython))
 	} else {
 		log.Info("python-" + version + "install success")
 	}
