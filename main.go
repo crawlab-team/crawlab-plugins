@@ -76,10 +76,7 @@ func (this *Command) PythonEnvInit(cli *cli.Context) {
 	} else {
 		log.Info("#########")
 	}
-	//cdInfo, err := exec.Command("cd", "/usr/local/"+"Python-"+version).Output()
-	//if err != nil {
-	//	log.Fatalf("cd python dir failed", string(cdInfo))
-	//}
+
 	err = os.Chdir("/usr/local/" + "Python-" + version)
 	if err != nil {
 		log.Fatalf("cd Python dir failed", err)
@@ -101,7 +98,7 @@ func (this *Command) PythonEnvInit(cli *cli.Context) {
 		log.Info("make install success")
 	}
 
-	eperlInfo, err := exec.Command("sudo", "yum", "-y", "install", "epel-release", "python-pip").Output()
+	eperlInfo, err := exec.Command("sudo", "yum", "-y", "install", "epel-release").Output()
 	if err != nil {
 		log.Fatalf("eperlInfo install failed", string(eperlInfo))
 	}
@@ -116,6 +113,24 @@ func (this *Command) PythonEnvInit(cli *cli.Context) {
 	} else {
 		log.Info("python-" + version + "install success")
 	}
+
+	pipInfo, err := exec.Command("wget", "https://bootstrap.pypa.io/3.2/get-pip.py").Output()
+	if err != nil {
+		log.Fatalf("download pip3 failed", string(pipInfo))
+	}
+	pipInstall, err := exec.Command("python3", "get-pip.py").Output()
+	if err != nil {
+		log.Fatalf("install pip3 failed", string(pipInstall))
+	} else {
+		log.Info("pip3 install success")
+	}
+	lnPip3, err := exec.Command("cp", "/usr/local/bin/pip3", "/bin").Output()
+	if err != nil {
+		log.Fatalf("cp pip3 failed", string(lnPip3))
+	} else {
+		log.Info("pip3 install success")
+	}
+
 }
 
 func main() {

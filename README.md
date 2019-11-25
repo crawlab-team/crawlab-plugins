@@ -9,4 +9,5 @@
 - Support centos now and will support more os later.
 #### how to use crawlab?
 - crawlab init --env=python --version=3.6.5 (default is python-3.6.5)
+- Then `python3` and `pip3` will be installed
 - We will add more crawlab plugins 
