@@ -45,7 +45,7 @@ func (this *Command) PythonEnvInit(cli *cli.Context) {
 	if err != nil {
 		log.Fatalf("网络检测失败程序退出，请重新检测网络环境", string(pingInfo))
 	}
-	log.Info("网络连接正常")
+	log.Info("网络连接正常,Downloading......")
 
 	yumInfo, err := exec.Command("yum", "list").Output()
 	if err != nil {
@@ -113,20 +113,14 @@ func (this *Command) PythonEnvInit(cli *cli.Context) {
 	} else {
 		log.Info("python-" + version + "install success")
 	}
+	upgradepip3Info, err := exec.Command("/usr/local/bin/pip3", "install", "--upgrade", "pip").Output()
+	if err != nil {
+		log.Fatalf("upgrade pip3 failed", string(upgradepip3Info))
+	}
 
-	pipInfo, err := exec.Command("wget", "https://bootstrap.pypa.io/3.2/get-pip.py").Output()
+	pipInfo, err := exec.Command("ln", "-s", "/usr/local/bin/pip3", "/bin/pip3").Output()
 	if err != nil {
-		log.Fatalf("download pip3 failed", string(pipInfo))
-	}
-	pipInstall, err := exec.Command("python3", "get-pip.py").Output()
-	if err != nil {
-		log.Fatalf("install pip3 failed", string(pipInstall))
-	} else {
-		log.Info("pip3 install success")
-	}
-	lnPip3, err := exec.Command("cp", "/usr/local/bin/pip3", "/bin").Output()
-	if err != nil {
-		log.Fatalf("cp pip3 failed", string(lnPip3))
+		log.Fatalf("ln pip3 failed", string(pipInfo))
 	} else {
 		log.Info("pip3 install success")
 	}
